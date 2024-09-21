@@ -1,1 +1,1 @@
-web: gunicorn nome_do_seu_projeto.wsgi --log-file -
+web: gunicorn celulares_subtraidos.wsgi --log-file -
