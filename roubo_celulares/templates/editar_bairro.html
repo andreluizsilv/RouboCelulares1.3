@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <p>Bem-vindo, {{ user.username }}!</p>
+    <h1>Editando o Bairro: {{ bairro.nome }}</h1>
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvar</button>
+  </form>
+{% else %}
+    <p>Você precisa estar logado para ver esta página.</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4">
+      <h3>5 Bairros com Mais Ocorrências de Roubos de Celulares</h3>
+      <!-- Tabela de bairros -->
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Bairro</th>
+            <th>Número de Ocorrências</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for bairro in bairros_mais_atacados %}
+          <tr>
+            <td>
+              <a href="{% url 'detalhes_ocorrencia' id=bairro.id %}">
+                {{ bairro.bairro }}
+              </a>
+            </td>
+            <td>{{ bairro.num_ocorrencias }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2">Nenhum dado disponível</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Adicione o mapa na coluna ao lado da tabela -->
+    <div class="col-md-8">
+      <div id="map" style="height: 500px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Script para configurar o mapa -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<script>
+    // Inicializa o mapa
+    var map = L.map('map').setView([-23.5505, -46.6333], 12);  // Coordenadas do centro do mapa
+
+    // Adiciona a camada de tile do OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Dados dos bairros (recebidos do servidor)
+    var bairros = [
+        {% for bairro in bairros_mais_atacados %}
+        {
+            "bairro": "{{ bairro.bairro }}",
+            "latitude": {{ bairro.latitude|floatformat }},
+            "longitude": {{ bairro.longitude|floatformat }},
+            "num_ocorrencias": {{ bairro.num_ocorrencias }},
+            "link": "{% url 'detalhes_ocorrencia' bairro.id %}"  // Link para a página de detalhes
+        },
+        {% endfor %}
+    ];
+
+    // Cria um array para armazenar os limites do mapa
+    var bounds = [];
+
+    // Adiciona marcadores para cada bairro
+    bairros.forEach(function(bairro) {
+        if (bairro.latitude && bairro.longitude) {
+            var marker = L.marker([bairro.latitude, bairro.longitude])
+                .addTo(map)
+                .bindPopup('<b>' + bairro.bairro + '</b><br>Número de Ocorrências: ' + bairro.num_ocorrencias + '<br><a href="' + bairro.link + '">Ver detalhes</a>');
+
+            // Adiciona a posição do marcador ao array de limites
+            bounds.push([bairro.latitude, bairro.longitude]);
+        }
+    });
+
+    // Ajusta a visualização do mapa para incluir todos os marcadores
+    if (bounds.length > 0) {
+        var group = new L.featureGroup(bounds.map(function(coord) { return L.marker(coord); }));
+        map.fitBounds(group.getBounds());
+    }
+</script>
+
+{% endblock %}
