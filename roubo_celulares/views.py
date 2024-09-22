@@ -3,26 +3,22 @@ from django.db.models import Count
 from django.http import HttpResponseForbidden
 from .models import Roubo, Bairro, Feedback
 from .forms import FeedbackForm, BairroForm
-
+import json
 
 def mapa_roubos(request):
     query = request.GET.get('query', '')
 
     if query:
-        # Filtrar dados com base na consulta do usuário e descr_tipolocal
         roubos = Roubo.objects.filter(bairro__nome__icontains=query, descr_tipolocal='Via Pública')
     else:
-        # Filtrar apenas por descr_tipolocal
         roubos = Roubo.objects.filter(descr_tipolocal='Via Pública')
 
-    # Calcular os 5 bairros mais atacados
     bairros_mais_atacados = (
         roubos.values('bairro__nome')
         .annotate(num_ocorrencias=Count('bairro'))
         .order_by('-num_ocorrencias')[:5]
     )
 
-    # Obter coordenadas da tabela Bairro
     bairros_com_coordenadas = []
     for bairro_data in bairros_mais_atacados:
         bairro_obj = Bairro.objects.filter(nome__iexact=bairro_data['bairro__nome']).first()
@@ -36,9 +32,13 @@ def mapa_roubos(request):
                 "num_ocorrencias": bairro_data['num_ocorrencias']
             })
 
+    # Gerar JSON
+    bairros_json = json.dumps(bairros_com_coordenadas)
+
     context = {
         'bairros_mais_atacados': bairros_com_coordenadas,
         'query': query,
+        'bairros_json': bairros_json,  # Adicione isso ao contexto
     }
 
     return render(request, 'filtrar_roubos.html', context)
