@@ -34,11 +34,6 @@ def limpar_e_salvar_bairros():
             subset=['LATITUDE', 'LONGITUDE', 'BAIRRO'])  # Remove linhas sem latitude, longitude ou bairro
         bairros_df = bairros_df.drop_duplicates(subset=['BAIRRO', 'LATITUDE', 'LONGITUDE'])
 
-        # Verificação de ausência de valores nulos após tratamento
-        if bairros_df[['LATITUDE', 'LONGITUDE', 'BAIRRO']].isnull().any().any():
-            raise ValueError(
-                "Os dados de LATITUDE, LONGITUDE ou BAIRRO contêm valores nulos após o tratamento inicial.")
-
         # Agrupar por bairro e fixar coordenadas (por exemplo, a primeira encontrada)
         bairros_agrupados_df = bairros_df.groupby('BAIRRO').agg({
             'LATITUDE': 'first',  # Ou use 'mean' para média se preferir
@@ -87,9 +82,9 @@ def limpar_e_salvar_roubos():
                 if created:
                     print(f"Bairro {bairro_obj.nome} criado novo ao registrar roubo.")
 
-                # Verificar se o bairro_obj possui latitude e longitude
+                # Verificar se o bairro_obj possui latitude e longitude válidas
                 if not bairro_obj.latitude or not bairro_obj.longitude:
-                    print(f"Bairro '{bairro_obj.nome}' não tem latitude ou longitude. Ignorando registro.")
+                    print(f"Bairro '{bairro_obj.nome}' não tem latitude ou longitude. Ignorando roubo na linha {index}.")
                     continue  # Ignora este roubo
 
                 # Cria o objeto Roubo
@@ -109,8 +104,11 @@ def limpar_e_salvar_roubos():
                 print(f"Erro ao processar o roubo na linha {index}: {str(e)}")
 
         # Inserir os objetos no banco de dados
-        Roubo.objects.bulk_create(roubos)
-        print("Dados de roubos salvos no banco de dados com sucesso!")
+        if roubos:
+            Roubo.objects.bulk_create(roubos)
+            print("Dados de roubos salvos no banco de dados com sucesso!")
+        else:
+            print("Nenhum roubo foi salvo, todos os registros foram ignorados devido a erros.")
     except Exception as e:
         print(f"Erro ao salvar os dados de roubos: {str(e)}")
 
