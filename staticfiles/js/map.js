@@ -10,7 +10,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 var bairros = [
     {% for bairro in bairros_mais_atacados %}
     {
-        "bairro": "{{ bairro.bairro }}",
+        "bairro": "{{ bairro.bairro|safe }}",
         "latitude": {{ bairro.latitude|floatformat }},
         "longitude": {{ bairro.longitude|floatformat }},
         "num_ocorrencias": {{ bairro.num_ocorrencias }},
