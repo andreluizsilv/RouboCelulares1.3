@@ -7,7 +7,17 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // Dados dos bairros (recebidos do servidor)
-var bairros = {{ bairros_json|safe }};  // Usando o JSON gerado no Django
+var bairros = [
+    {% for bairro in bairros_mais_atacados %}
+    {
+        "bairro": "{{ bairro.bairro }}",
+        "latitude": {{ bairro.latitude|floatformat }},
+        "longitude": {{ bairro.longitude|floatformat }},
+        "num_ocorrencias": {{ bairro.num_ocorrencias }},
+        "id": {{ bairro.id }}
+    },
+    {% endfor %}
+];
 
 // Adiciona marcadores para cada bairro
 bairros.forEach(function(bairro) {
@@ -15,6 +25,7 @@ bairros.forEach(function(bairro) {
         .addTo(map)
         .bindPopup('<b>' + bairro.bairro + '</b><br>Número de Ocorrências: ' + bairro.num_ocorrencias)
         .on('click', function() {
+            // Redireciona para a página de detalhes do bairro
             window.location.href = "/detalhes/" + bairro.id + "/";
         });
 });
