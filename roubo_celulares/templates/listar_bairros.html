@@ -2,7 +2,10 @@
 {% block content %}
 <div class="container">
     <h2>Lista de Bairros</h2>
+            {% csrf_token %}
     <form method="GET" action="{% url 'listar_bairros' %}" class="d-flex mb-3">
+            {% csrf_token %}
+
         <input class="form-control me-2" type="text" id="query" name="query" value="{{ query }}" placeholder="Digite o nome do bairro">
         <button class="btn btn-outline-success" type="submit">Buscar</button>
     </form>
