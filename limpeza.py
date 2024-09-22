@@ -53,7 +53,7 @@ def limpar_e_salvar_bairros():
 
             obj, created = Bairro.objects.update_or_create(
                 nome=row['BAIRRO'],
-                defaults={'latitude': row['LATITUDE'], 'longitude': row['LONGITUDE']}
+                defaults={'latitude': row['LATITUDE'].replace(',','.'), 'longitude': row['LONGITUDE'].replace(',','.'),}
             )
             if created:
                 print(f"Bairro {row['BAIRRO']} criado com sucesso!")
