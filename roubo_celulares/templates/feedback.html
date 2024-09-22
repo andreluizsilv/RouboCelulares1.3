@@ -2,7 +2,8 @@
 {% block content %}
 <div class="container">
     <h2>Formulário de Feedback</h2>
-    <form method="post">
+        {% csrf_token %}
+        <form method="post">
         {% csrf_token %}
 
         <label for="nome">Nome:</label><br>

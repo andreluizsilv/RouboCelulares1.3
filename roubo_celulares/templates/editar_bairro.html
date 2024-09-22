@@ -3,6 +3,7 @@
 {% block content %}
 {% if user.is_authenticated %}
     <p>Bem-vindo, {{ user.username }}!</p>
+{% csrf_token %}
     <h1>Editando o Bairro: {{ bairro.nome }}</h1>
   <form method="POST">
     {% csrf_token %}
