@@ -89,7 +89,8 @@ def limpar_e_salvar_roubos():
 
                 # Verificar se o bairro_obj possui latitude e longitude
                 if not bairro_obj.latitude or not bairro_obj.longitude:
-                    raise ValueError(f"Bairro '{bairro_obj.nome}' não tem latitude ou longitude.")
+                    print(f"Bairro '{bairro_obj.nome}' não tem latitude ou longitude. Ignorando registro.")
+                    continue  # Ignora este roubo
 
                 # Cria o objeto Roubo
                 roubo = Roubo(
