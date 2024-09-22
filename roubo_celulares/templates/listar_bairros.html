@@ -21,8 +21,8 @@
             {% for bairro in bairros %}
             <tr>
                 <td>{{ bairro.nome }}</td>
-                <td>{{ bairro.latitude }}</td>
-                <td>{{ bairro.longitude }}</td>
+                <td>{{ bairro.latitude.replace:',','.' }}</td>
+                <td>{{ bairro.longitude.replace:',','.' }}</td>
                 <td>
                     <a href="{% url 'editar_bairro' bairro.id %}" class="btn btn-primary">Editar</a>
                     <a href="{% url 'deletar_bairro' bairro.id %}" class="btn btn-danger">Deletar</a>

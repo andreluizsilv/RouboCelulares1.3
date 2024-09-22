@@ -29,6 +29,10 @@ def limpar_e_salvar_bairros():
         # Ler o arquivo Excel de bairros
         bairros_df = pd.read_excel('bairros_lat_log.xlsx')
 
+        # Converter LATITUDE e LONGITUDE para strings e substituir vírgula por ponto
+        bairros_df['LATITUDE'] = bairros_df['LATITUDE'].astype(str).str.replace(',', '.')
+        bairros_df['LONGITUDE'] = bairros_df['LONGITUDE'].astype(str).str.replace(',', '.')
+
         # Tratar valores ausentes e duplicidades
         bairros_df = bairros_df.dropna(
             subset=['LATITUDE', 'LONGITUDE', 'BAIRRO'])  # Remove linhas sem latitude, longitude ou bairro
@@ -53,7 +57,7 @@ def limpar_e_salvar_bairros():
 
             obj, created = Bairro.objects.update_or_create(
                 nome=row['BAIRRO'],
-                defaults={'latitude': row['LATITUDE'].replace(',','.'), 'longitude': row['LONGITUDE'].replace(',','.'),}
+                defaults={'latitude': row['LATITUDE'], 'longitude': row['LONGITUDE']}
             )
             if created:
                 print(f"Bairro {row['BAIRRO']} criado com sucesso!")

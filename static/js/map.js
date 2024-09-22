@@ -12,8 +12,8 @@ var bairros = [
     {% for bairro in bairros_mais_atacados %}
     {
         "bairro": "{{ bairro.bairro }}",
-        "latitude": {{ bairro.latitude|floatformat|default_if_none:"0.0" }},
-        "longitude": {{ bairro.longitude|floatformat|default_if_none:"0.0" }},
+        "latitude": {{ bairro.latitude|floatformat.replace:',','.'|default_if_none:"0.0" }},
+        "longitude": {{ bairro.longitude|floatformat.replace:',','.'|default_if_none:"0.0" }},
         "num_ocorrencias": {{ bairro.num_ocorrencias }},
         "id": {{ bairro.id }}
     },
