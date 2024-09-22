@@ -1,5 +1,4 @@
-{%l oad static %}
-<script>
+
 // Inicializa o mapa
 var map = L.map('map').setView([-23.5505, -46.6333], 12); // Coordenadas do centro do mapa
 
@@ -36,4 +35,3 @@ bairros.forEach(function(bairro) {
         console.warn("Bairro sem coordenadas válidas: " + bairro.bairro);
     }
 });
-</script>
