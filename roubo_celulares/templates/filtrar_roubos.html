@@ -44,48 +44,4 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-<script>
-    // Inicializa o mapa
-    var map = L.map('map').setView([-23.5505, -46.6333], 12);  // Coordenadas do centro do mapa
-
-    // Adiciona a camada de tile do OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Dados dos bairros (recebidos do servidor)
-    var bairros = [
-        {% for bairro in bairros_mais_atacados %}
-        {
-            "bairro": "{{ bairro.bairro }}",
-            "latitude": {{ bairro.latitude|floatformat }},
-            "longitude": {{ bairro.longitude|floatformat }},
-            "num_ocorrencias": {{ bairro.num_ocorrencias }},
-            "link": "{% url 'detalhes_ocorrencia' bairro.id %}"  // Link para a página de detalhes
-        },
-        {% endfor %}
-    ];
-
-    // Cria um array para armazenar os limites do mapa
-    var bounds = [];
-
-    // Adiciona marcadores para cada bairro
-    bairros.forEach(function(bairro) {
-        if (bairro.latitude && bairro.longitude) {
-            var marker = L.marker([bairro.latitude, bairro.longitude])
-                .addTo(map)
-                .bindPopup('<b>' + bairro.bairro + '</b><br>Número de Ocorrências: ' + bairro.num_ocorrencias + '<br><a href="' + bairro.link + '">Ver detalhes</a>');
-
-            // Adiciona a posição do marcador ao array de limites
-            bounds.push([bairro.latitude, bairro.longitude]);
-        }
-    });
-
-    // Ajusta a visualização do mapa para incluir todos os marcadores
-    if (bounds.length > 0) {
-        var group = new L.featureGroup(bounds.map(function(coord) { return L.marker(coord); }));
-        map.fitBounds(group.getBounds());
-    }
-</script>
-
 {% endblock %}
