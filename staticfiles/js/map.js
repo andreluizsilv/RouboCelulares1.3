@@ -1,3 +1,5 @@
+{%load static %}
+<script>
 // Inicializa o mapa
 var map = L.map('map').setView([-23.5505, -46.6333], 12); // Coordenadas do centro do mapa
 
@@ -10,7 +12,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 var bairros = [
     {% for bairro in bairros_mais_atacados %}
     {
-        "bairro": "{{ bairro.bairro|escapejs }}",
+        "bairro": "{{ bairro.bairro}}",
         "latitude": {{ bairro.latitude|floatformat }},
         "longitude": {{ bairro.longitude|floatformat }},
         "num_ocorrencias": {{ bairro.num_ocorrencias }},
@@ -30,3 +32,4 @@ bairros.forEach(function(bairro) {
             window.location.href = "/detalhes/" + bairro.id + "/";
         });
 });
+</script>
