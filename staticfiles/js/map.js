@@ -10,14 +10,15 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 var bairros = [
     {% for bairro in bairros_mais_atacados %}
     {
-        "bairro": "{{ bairro.bairro|safe }}",
+        "bairro": "{{ bairro.bairro|escapejs }}",
         "latitude": {{ bairro.latitude|floatformat }},
         "longitude": {{ bairro.longitude|floatformat }},
         "num_ocorrencias": {{ bairro.num_ocorrencias }},
         "id": {{ bairro.id }}
-    },
+    }{% if not forloop.last %},{% endif %}
     {% endfor %}
 ];
+
 
 // Adiciona marcadores para cada bairro
 bairros.forEach(function(bairro) {
