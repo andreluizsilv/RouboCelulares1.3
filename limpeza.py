@@ -82,14 +82,13 @@ def limpar_e_salvar_roubos():
         roubos = []
         for index, row in celulares_df.iterrows():
             try:
-                # Busca ou cria o bairro correspondente
-                bairro_obj, created = Bairro.objects.get_or_create(nome=row['BAIRRO'])
-                if created:
-                    print(f"Bairro {bairro_obj.nome} criado novo ao registrar roubo.")
+                # Busca o bairro correspondente
+                bairro_obj = Bairro.objects.filter(nome=row['BAIRRO']).first()
 
-                # Verificar se o bairro_obj possui latitude e longitude
-                if not bairro_obj.latitude or not bairro_obj.longitude:
-                    raise ValueError(f"Bairro '{bairro_obj.nome}' não tem latitude ou longitude.")
+                # Verifica se o bairro tem latitude e longitude válidas
+                if not bairro_obj or bairro_obj.latitude is None or bairro_obj.longitude is None:
+                    print(f"Bairro '{row['BAIRRO']}' não possui coordenadas válidas. Ignorando roubo na linha {index}.")
+                    continue  # Ignora este roubo
 
                 # Cria o objeto Roubo
                 roubo = Roubo(
@@ -108,8 +107,11 @@ def limpar_e_salvar_roubos():
                 print(f"Erro ao processar o roubo na linha {index}: {str(e)}")
 
         # Inserir os objetos no banco de dados
-        Roubo.objects.bulk_create(roubos)
-        print("Dados de roubos salvos no banco de dados com sucesso!")
+        if roubos:
+            Roubo.objects.bulk_create(roubos)
+            print("Dados de roubos salvos no banco de dados com sucesso!")
+        else:
+            print("Nenhum roubo foi salvo, todos os registros foram ignorados devido a erros.")
     except Exception as e:
         print(f"Erro ao salvar os dados de roubos: {str(e)}")
 
