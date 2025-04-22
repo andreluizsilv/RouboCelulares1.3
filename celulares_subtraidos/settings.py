@@ -82,28 +82,16 @@ WSGI_APPLICATION = 'celulares_subtraidos.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-
-# Configuração padrão para SQLite
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if os.getenv("RAILWAY_ENVIRONMENT") == "production":
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600)
     }
-}
-
-# Verificação da variável de ambiente
-DATABASE_URL = os.getenv("DATABASE_URL")
-if DATABASE_URL:
-    DATABASES['default'] = dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
 else:
-    # Fallback para PostgreSQL caso a variável DATABASE_URL não esteja definida
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('railway'),
-        'USER': os.getenv('postgres'),
-        'PASSWORD': os.getenv('JlkkVVFPDiAUrWzaKGCBkRrgWEPBHKAA'),
-        'HOST': os.getenv('postgres.railway.internal'),
-        'PORT': os.getenv('5432'),
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

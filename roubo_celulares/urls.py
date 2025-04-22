@@ -5,6 +5,7 @@ urlpatterns = [
     # Rota para a página inicial ou mapa de roubos
     path('', views.mapa_roubos, name='mapa_roubos'),
 
+
     # Rota para a página de detalhes de uma ocorrência específica
     path('detalhes/<int:id>/', views.detalhes_ocorrencia, name='detalhes_ocorrencia'),
 
